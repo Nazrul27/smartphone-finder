@@ -1,21 +1,25 @@
-const errorMessage =displayError =>{
-    document.getElementById('error').style.display = displayError;
-}
+
 const getData = () =>{
     const searchInput = document.getElementById('search-input');
     const searchInputText = searchInput.value;
-    if(!searchInputText){
-        errorMessage('block');
-    }
+    spinnerLoading('block');
     searchInput.value = '';
-    const url =`https://openapi.programming-hero.com/api/phones?search=${searchInputText}`
-    fetch(url)
-    .then(res => res.json())
-    .then(data => displayData(data.data));
+    if(searchInputText.length == ''){
+      errorMessage('block');
+      spinnerLoading('none');
+    }else{   
+      const url =`https://openapi.programming-hero.com/api/phones?search=${searchInputText}`
+      fetch(url)
+      .then(res => res.json())
+      .then(data => displayData(data.data));
+    }
+    
+    
 }
  const displayData = (phoneData) =>{
+  const cardField = document.getElementById('card');
+  cardField.textContent = '';
      phoneData.forEach(phone =>{
-         const cardField = document.getElementById('card');
         const div = document.createElement('div');
         div.classList.add('col');
         div.innerHTML =`<div onclick ="getDetails('${phone.slug}')" class="card">
@@ -28,6 +32,8 @@ const getData = () =>{
       cardField.appendChild(div);
 
     }) 
+    errorMessage('none');
+    spinnerLoading('none');
 }
 const getDetails = (detail) =>{    
      const url = `https://openapi.programming-hero.com/api/phone/${detail}`;
@@ -37,6 +43,7 @@ const getDetails = (detail) =>{
 }
   const displayGetDetails = (data) =>{
     const detailField = document.getElementById('details');
+    detailField.textContent = '';
     const div = document.createElement('div');
     div.classList.add('card');
     div.innerHTML = `<div class="card">
@@ -50,3 +57,12 @@ const getDetails = (detail) =>{
   </div>`;
   detailField.appendChild(div);
 } 
+// error handle
+const errorMessage =displayError =>{
+  document.getElementById('error').style.display = displayError;
+}
+// spinner
+const spinnerLoading = displaySpinner =>{
+document.getElementById('spinner').style.display = displaySpinner;
+}
+
